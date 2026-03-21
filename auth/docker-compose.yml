@@ -1,0 +1,38 @@
+services:
+  auth:
+    container_name: auth
+    image: hyperf-skeleton
+    build:
+      dockerfile: dev.Dockerfile
+      args:
+        UID: 1000
+        GID: 1000
+    volumes:
+      - ./:/opt/www
+    ports:
+      - 9501:9501
+    environment:
+      - APP_ENV=dev
+      - SCAN_CACHEABLE=false
+    env_file:
+      - .env
+    develop:
+      watch:
+        - action: restart
+          path: app
+  postgres-auth:
+    image: postgres:17
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${DB_DATABASE}
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+  redis-auth:
+    image: redis:7
+    env_file:
+      .env
+
+networks:
+  default:
+    name: hyperf-skeleton

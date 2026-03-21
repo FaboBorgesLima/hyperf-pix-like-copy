@@ -1,0 +1,7 @@
+- [ ] Auth Service
+    - [ ] User registration
+    - [ ] User login
+    - [ ] User management (CRUD operations)
+    - [ ] Authentication using JWT
+- [ ] Transaction Service
+- [ ] Notification Service
