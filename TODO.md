@@ -1,7 +1,8 @@
 - [ ] Auth Service
-    - [ ] User registration
-    - [ ] User login
-    - [ ] User management (CRUD operations)
-    - [ ] Authentication using JWT
+    - [x] User registration
+    - [x] User login
+    - [ ] Email verification (using notification service)
+    - [x] User management (CRUD operations)
+    - [x] Authentication using JWT
 - [ ] Transaction Service
 - [ ] Notification Service

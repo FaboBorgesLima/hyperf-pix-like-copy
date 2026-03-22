@@ -12,3 +12,15 @@ This is a clone-like of the Pix payment system using the Hyperf framework and mi
 Every service is built using the Hyperf framework and runs in its own Docker container. The services communicate with each other using RabbitMQ for asynchronous messaging.
 
 All services have their own Docker Compose configuration with their own Databases, and the main `docker-compose.yaml` file includes these configurations to orchestrate the entire application.
+
+## Setup
+
+Run the following command to set up the application:
+
+```bash
+./setup.sh
+```
+
+```bash
+docker compose up
+```
