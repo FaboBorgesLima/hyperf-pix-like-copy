@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Middleware\AuthMiddleware;
 use App\Request\UpdateUserRequest;
 use App\Service\UserService;
 use Hyperf\Di\Annotation\Inject;
-use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\GetMapping;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\PutMapping;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
+use Shared\Auth\Middleware\AuthMiddleware;
 
 #[Middleware(AuthMiddleware::class)]
 #[Controller()]

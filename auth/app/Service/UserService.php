@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Exception\BusinessException;
-use App\Model\AuthToken;
+use Shared\Auth\Model\AuthToken;
 use App\Model\User;
 
 class UserService

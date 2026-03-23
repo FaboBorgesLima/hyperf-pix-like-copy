@@ -1,0 +1,28 @@
+services:
+  gateway:
+    container_name: gateway
+    image: hyperf-skeleton
+    build:
+      dockerfile: dev.Dockerfile
+      args:
+        UID: 1000
+        GID: 1000
+    volumes:
+      - ./:/opt/www
+      - ../packages:/opt/packages
+    ports:
+      - 9502:9501
+    environment:
+      - APP_ENV=dev
+      - SCAN_CACHEABLE=false
+    networks:
+      - shared
+      - auth-gateway
+    env_file:
+      - .env
+
+networks:
+  shared:
+    external: true
+  auth-gateway:
+    external: true

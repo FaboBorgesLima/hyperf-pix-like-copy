@@ -9,6 +9,7 @@ services:
         GID: 1000
     volumes:
       - ./:/opt/www
+      - ../packages:/opt/packages
     ports:
       - 9501:9501
     environment:
@@ -20,6 +21,10 @@ services:
       watch:
         - action: restart
           path: app
+    networks:
+      - auth-internal
+      - shared
+      - auth-gateway
   postgres-auth:
     image: postgres:17
     env_file:
@@ -28,11 +33,20 @@ services:
       - POSTGRES_DB=${DB_DATABASE}
       - POSTGRES_USER=${DB_USERNAME}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
+    networks:
+      - auth-internal
   redis-auth:
     image: redis:7
     env_file:
       .env
-
+    networks:
+      - auth-internal
+      - shared
 networks:
-  default:
-    name: hyperf-skeleton
+  auth-internal:
+    name: auth-internal
+    driver: bridge
+  shared:
+    external: true
+  auth-gateway:
+    external: true

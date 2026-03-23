@@ -6,3 +6,6 @@
     - [x] Authentication using JWT
 - [ ] Transaction Service
 - [ ] Notification Service
+- [ ] Gateway Service
+    - [ ] Authentication and authorization
+    - [ ] Api routing

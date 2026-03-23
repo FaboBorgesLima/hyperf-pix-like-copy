@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Log;
-use App\Middleware\AuthMiddleware;
 use App\Model\AuthToken;
 use App\Model\User;
 use App\Request\LoginRequest;
@@ -18,6 +17,7 @@ use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\GetMapping;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\PostMapping;
+use Shared\Auth\Middleware\AuthMiddleware;
 
 #[AutoController(prefix: "/auth")]
 class AuthController

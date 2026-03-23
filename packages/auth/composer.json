@@ -1,0 +1,24 @@
+{
+    "name": "shared/auth",
+    "description": "Shared auth primitives: AuthToken, contracts and AuthMiddleware",
+    "type": "library",
+    "license": "Apache-2.0",
+    "require": {
+        "php": ">=8.1",
+        "carbonphp/carbon-doctrine-types": "*",
+        "nesbot/carbon": "^2.0|^3.0",
+        "hyperf/http-server": "~3.1.0",
+        "firebase/php-jwt": "^7.0",
+        "hyperf/redis": "~3.1.0",
+        "psr/log": "^1.0|^2.0|^3.0",
+        "psr/http-server-middleware": "*",
+        "psr/container": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Shared\\Auth\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

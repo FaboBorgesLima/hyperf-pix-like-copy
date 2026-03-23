@@ -11,8 +11,15 @@
   ],
   "description": "A coroutine framework that focuses on hyperspeed and flexible, specifically use for build microservices and middlewares.",
   "license": "Apache-2.0",
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../packages/auth"
+    }
+  ],
   "require": {
     "php": ">=8.1",
+    "shared/auth": "*",
     "fakerphp/faker": "^1.24",
     "firebase/php-jwt": "^7.0",
     "hyperf/amqp": "~3.1.0",

@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Contract\TokenManagerInterface;
+use App\Contract\TokenAttributionInterface;
 use App\Log;
-use App\Model\AuthToken;
+use Shared\Auth\Model\AuthToken;
 use App\Model\User;
 use App\Task\HashTask;
 use Carbon\Carbon;
+use Shared\Auth\Contract\TokenVerifierInterface;
 
 class AuthService
 {
 
     public function __construct(
         protected HashTask $hashTask,
-        protected TokenManagerInterface $tokenManager
+        protected TokenAttributionInterface $tokenAttribution,
+        protected TokenVerifierInterface $tokenVerifier
     ) {}
 
     public function login(
@@ -32,8 +34,9 @@ class AuthService
 
         $authToken = $this->createTokenForUser($user);
 
+        Log::info("User logged in: {$user->id} ({$user->email})");
 
-        return $this->tokenManager->encode($authToken);
+        return $this->tokenAttribution->encode($authToken);
     }
 
     public function register(
@@ -51,14 +54,14 @@ class AuthService
             'password' => $passwordHash,
         ]);
 
-        return $this->tokenManager->encode($this->createTokenForUser($user));
+        return $this->tokenAttribution->encode($this->createTokenForUser($user));
     }
 
     public function logout(string $token): void
     {
-        $authToken = $this->tokenManager->decode($token);
+        $authToken = $this->tokenVerifier->decode($token);
         if ($authToken) {
-            $this->tokenManager->blacklist($authToken);
+            $this->tokenAttribution->blacklist($authToken);
         }
     }
 
@@ -74,11 +77,11 @@ class AuthService
 
     public function validateToken(string $token): ?AuthToken
     {
-        if ($this->tokenManager->isBlacklisted($token)) {
+        if ($this->tokenVerifier->isBlacklisted($token)) {
             return null;
         }
 
-        $authToken = $this->tokenManager->decode($token);
+        $authToken = $this->tokenVerifier->decode($token);
         if (!$authToken || $authToken->isExpired()) {
             return null;
         }
@@ -90,7 +93,7 @@ class AuthService
     protected function createTokenForUser(User $user): AuthToken
     {
         $expireAt = Carbon::now()->addDays(7);
-        $authToken = AuthToken::create($user, $expireAt);
+        $authToken = AuthToken::create($user->id, $expireAt);
 
         return $authToken;
     }
