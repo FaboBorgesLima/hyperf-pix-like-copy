@@ -22,7 +22,7 @@ function composer_install() {
     local service=$1
     docker run -w /data/project \
     -v "./$service:/data/project" \
-    -v "./packages:/opt/packages" \
+    -v "./packages:/data/packages" \
     --rm -it \
     --privileged -u root \
     composer install --ignore-platform-reqs
