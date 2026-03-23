@@ -21,8 +21,8 @@ function create_env() {
 function composer_install() {
     local service=$1
     docker run -w /data/project \
-    -v "./$service:/data/project" \
-    -v "./packages:/data/packages" \
+    -v "$(pwd)/$service:/data/project" \
+    -v "$(pwd)/packages:/data/packages" \
     --rm -it \
     --privileged -u root \
     composer install --ignore-platform-reqs
@@ -41,6 +41,8 @@ create_secrets
 
 create_env "auth"
 composer_install "auth"
+
 create_env "gateway"
 composer_install "gateway"
+
 create_shared_networks
