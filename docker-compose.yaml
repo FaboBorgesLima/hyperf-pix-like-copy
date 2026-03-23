@@ -1,5 +1,14 @@
+networks:
+  shared:
+    name: shared
+    driver: bridge
+  auth-gateway:
+    name: auth-gateway
+    driver: bridge
+
 include:
   - auth/docker-compose.yml
+  - gateway/docker-compose.yml
 services:
   rabbitmq:
     image: rabbitmq:3-management
@@ -8,6 +17,8 @@ services:
       - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
-  
+    networks:
+      - shared
+
 volumes:
   rabbitmq_data:

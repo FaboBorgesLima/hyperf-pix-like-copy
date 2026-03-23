@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Unit;
 
 use App\Exception\BusinessException;
-use App\Model\AuthToken;
+use Shared\Auth\Model\AuthToken;
 use App\Service\UserService;
 use Carbon\Carbon;
 use Tests\TestCase;
@@ -58,7 +60,7 @@ class UserServiceTest extends TestCase
     public function testGetUserProfile(): void
     {
         $user = $this->createUser();
-        $authToken = AuthToken::create($user, Carbon::now()->addHour());
+        $authToken = AuthToken::create($user->id, Carbon::now()->addHour());
 
         $profile = $this->service()->getUserProfile($authToken, $user->id);
 
@@ -69,7 +71,7 @@ class UserServiceTest extends TestCase
     public function testGetUserProfileWithExpiredToken(): void
     {
         $user = $this->createUser();
-        $authToken = AuthToken::create($user, Carbon::now()->subSecond());
+        $authToken = AuthToken::create($user->id, Carbon::now()->subSecond());
 
         $this->expectException(BusinessException::class);
         $this->expectExceptionCode(403);
@@ -81,7 +83,7 @@ class UserServiceTest extends TestCase
     {
         $user1 = $this->createUser();
         $user2 = $this->createUser();
-        $authToken = AuthToken::create($user1, Carbon::now()->addHour());
+        $authToken = AuthToken::create($user1->id, Carbon::now()->addHour());
 
         $this->expectException(BusinessException::class);
         $this->expectExceptionCode(403);
@@ -94,7 +96,7 @@ class UserServiceTest extends TestCase
     public function testUpdateUserProfile(): void
     {
         $user = $this->createUser();
-        $authToken = AuthToken::create($user, Carbon::now()->addHour());
+        $authToken = AuthToken::create($user->id, Carbon::now()->addHour());
 
         $newName = $this->faker()->name();
         $updatedUser = $this->service()->updateUserProfile($authToken, $user->id, ['name' => $newName]);
@@ -105,7 +107,7 @@ class UserServiceTest extends TestCase
     public function testUpdateUserProfileWithExpiredToken(): void
     {
         $user = $this->createUser();
-        $authToken = AuthToken::create($user, Carbon::now()->subSecond());
+        $authToken = AuthToken::create($user->id, Carbon::now()->subSecond());
 
         $this->expectException(BusinessException::class);
         $this->expectExceptionCode(403);
@@ -117,7 +119,7 @@ class UserServiceTest extends TestCase
     {
         $user1 = $this->createUser();
         $user2 = $this->createUser();
-        $authToken = AuthToken::create($user1, Carbon::now()->addHour());
+        $authToken = AuthToken::create($user1->id, Carbon::now()->addHour());
 
         $this->expectException(BusinessException::class);
         $this->expectExceptionCode(403);
@@ -143,7 +145,7 @@ class UserServiceTest extends TestCase
     public function testDeleteUserAlwaysUnauthorized(): void
     {
         $user = $this->createUser();
-        $authToken = AuthToken::create($user, Carbon::now()->addHour());
+        $authToken = AuthToken::create($user->id, Carbon::now()->addHour());
 
         $this->expectException(BusinessException::class);
         $this->expectExceptionCode(403);
@@ -154,7 +156,7 @@ class UserServiceTest extends TestCase
     public function testDeleteUserWithExpiredToken(): void
     {
         $user = $this->createUser();
-        $authToken = AuthToken::create($user, Carbon::now()->subSecond());
+        $authToken = AuthToken::create($user->id, Carbon::now()->subSecond());
 
         $this->expectException(BusinessException::class);
         $this->expectExceptionCode(403);

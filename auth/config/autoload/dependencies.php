@@ -10,5 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 return [
-    \App\Contract\TokenManagerInterface::class => \App\Service\JWTManager::class,
+    // Package-namespace bindings (used by Shared\Auth\Middleware\AuthMiddleware)
+    Shared\Auth\Contract\TokenVerifierInterface::class => Shared\Auth\Service\JwtVerifier::class,
+    App\Contract\TokenAttributionInterface::class => App\Service\JwtAttribution::class,
 ];

@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Contract;
+declare(strict_types=1);
 
-use App\Model\AuthToken;
+namespace Shared\Auth\Contract;
+
+use Shared\Auth\Model\AuthToken;
 
 interface TokenVerifierInterface
 {

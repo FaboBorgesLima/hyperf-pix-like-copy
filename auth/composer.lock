@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "35495fb119009f4fd9f5412006c3a1e3",
+    "content-hash": "90868e620eb37950c807b12f49d32f6e",
     "packages": [
         {
             "name": "brick/math",
@@ -7593,6 +7593,39 @@
                 }
             ],
             "time": "2023-02-07T11:34:05+00:00"
+        },
+        {
+            "name": "shared/auth",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../packages/auth",
+                "reference": "9119efe768fff953e4f88776d5453cff6e6b2f1d"
+            },
+            "require": {
+                "carbonphp/carbon-doctrine-types": "*",
+                "firebase/php-jwt": "^7.0",
+                "hyperf/http-server": "~3.1.0",
+                "hyperf/redis": "~3.1.0",
+                "nesbot/carbon": "^2.0|^3.0",
+                "php": ">=8.1",
+                "psr/container": "*",
+                "psr/http-server-middleware": "*",
+                "psr/log": "^1.0|^2.0|^3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Shared\\Auth\\": "src/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Shared auth primitives: AuthToken, contracts and AuthMiddleware",
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "swow/psr7-plus",

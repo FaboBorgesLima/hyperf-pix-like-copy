@@ -27,7 +27,19 @@ function composer_install() {
     composer install --ignore-platform-reqs
 }
 
+function create_shared_networks() {
+    if ! docker network ls --format '{{.Name}}' | grep -q "shared"; then
+        docker network create shared
+    fi
+    if ! docker network ls --format '{{.Name}}' | grep -q "auth-gateway"; then
+        docker network create auth-gateway
+    fi
+}
+
 create_secrets
 
 create_env "auth"
 composer_install "auth"
+create_env "gateway"
+composer_install "gateway"
+create_shared_networks
