@@ -5,10 +5,20 @@ networks:
   auth-gateway:
     name: auth-gateway
     driver: bridge
+  transaction-gateway:
+    name: transaction-gateway
+    driver: bridge
+  messaging:
+    name: messaging
+    driver: bridge
+  auth-cache:
+    name: auth-cache
+    driver: bridge
 
 include:
   - auth/docker-compose.yml
   - gateway/docker-compose.yml
+  - transaction/docker-compose.yml
 services:
   rabbitmq:
     image: rabbitmq:3-management
@@ -18,7 +28,7 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
-      - shared
+      - messaging
 
 volumes:
   rabbitmq_data:

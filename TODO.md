@@ -5,7 +5,24 @@
     - [x] User management (CRUD operations)
     - [x] Authentication using JWT
 - [ ] Transaction Service
+    - [x] Account management (only create and read operations)
+    - [x] Fund transfer between accounts with proper transaction handling (no overdrafts)
+    - [ ] Transaction history retrieval
+    - [ ] Create controller and routes for the above functionalities
+    - [ ] Use RabbitMQ for creating account when a new user is registered
 - [ ] Notification Service
-- [ ] Gateway Service
-    - [ ] Authentication and authorization
-    - [ ] Api routing
+- [x] Gateway Service
+    - [x] Authentication and authorization
+    - [x] Api routing
+    - [ ] Rate limiting
+- [ ] Frontend
+    - [ ] User registration and login pages
+    - [ ] Dashboard for managing accounts and transactions
+    - [ ] Real-time notifications for transactions (using WebSockets)
+- [ ] Create standardized and modular Kubernetes deployment for each service
+    - [x] Use standardized Dockerfiles for each service
+    - [ ] Integration with RabbitMQ for the transaction service
+    - [ ] CNPG for the database (when applicable)
+    - [ ] Use Redis for caching and session management (when applicable)
+    - [ ] Create deployment scripts for production environment
+    - [ ] Set up CI/CD pipelines for automated testing and deployment (using GitHub Actions, just SSH into the server and run deployment scripts)

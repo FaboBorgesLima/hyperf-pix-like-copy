@@ -1,0 +1,57 @@
+services:
+  transaction:
+    container_name: transaction
+    image: hyperf-skeleton
+    build:
+      dockerfile: dev.Dockerfile
+      args:
+        UID: 1000
+        GID: 1000
+    volumes:
+      - ./:/opt/www
+      - ../packages:/opt/packages
+    ports:
+      - 9503:9501
+    environment:
+      - APP_ENV=dev
+      - SCAN_CACHEABLE=false
+    networks:
+      - transaction-internal
+      - transaction-gateway
+      - messaging
+    env_file:
+      - .env
+    develop:
+      watch:
+        - action: restart
+          path: app
+    depends_on:
+      - postgres-transaction
+  postgres-transaction:
+    image: postgres:17
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${DB_DATABASE}
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    networks:
+      - transaction-internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${DB_USERNAME} -d $${DB_DATABASE}"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+  redis-transaction:
+    image: redis:7
+    env_file:
+      - .env
+    networks:
+      - transaction-internal
+networks:
+  transaction-internal:
+    name: transaction-internal
+    driver: bridge
+  transaction-gateway:
+  messaging:

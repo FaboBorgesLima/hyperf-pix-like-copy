@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "90868e620eb37950c807b12f49d32f6e",
+    "content-hash": "29ca105fa15ffa5d0ab33cbad88030fd",
     "packages": [
         {
             "name": "brick/math",
@@ -7628,6 +7628,40 @@
             }
         },
         {
+            "name": "shared/model",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../packages/model",
+                "reference": "43c180056497f3e6fed693076229de628b7e845d"
+            },
+            "require": {
+                "carbonphp/carbon-doctrine-types": "*",
+                "firebase/php-jwt": "^7.0",
+                "hyperf/http-server": "~3.1.0",
+                "hyperf/redis": "~3.1.0",
+                "nesbot/carbon": "^2.0|^3.0",
+                "php": ">=8.1",
+                "psr/container": "*",
+                "psr/http-server-middleware": "*",
+                "psr/log": "^1.0|^2.0|^3.0",
+                "ramsey/uuid": "^4.9"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Shared\\Model\\": "src/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Shared model traits and base models for all services",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "swow/psr7-plus",
             "version": "v1.1.2",
             "source": {
@@ -12337,7 +12371,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {},
+    "stability-flags": {
+        "shared/model": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

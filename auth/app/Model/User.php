@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-use App\Lib\ModelUUID;
+use Shared\Model\Trait\HasUUID;
 use Hyperf\Database\Model\SoftDeletes;
+use Hyperf\DbConnection\Model\Model;
 
 /**
  * @property string $id 
@@ -16,9 +17,13 @@ use Hyperf\Database\Model\SoftDeletes;
  * @property \Carbon\Carbon $updated_at 
  * @property \Carbon\Carbon|null $deleted_at 
  */
-class User extends ModelUUID
+class User extends Model
 {
-    use SoftDeletes;
+    use HasUUID, SoftDeletes;
+
+    public string $keyType = 'string';
+    public bool $incrementing = false;
+
     /**
      * The table associated with the model.
      */

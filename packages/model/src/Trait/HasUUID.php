@@ -1,31 +1,30 @@
 <?php
 
-namespace App\Lib;
+declare(strict_types=1);
+
+namespace Shared\Model\Trait;
 
 use Ramsey\Uuid\Uuid;
-use Hyperf\DbConnection\Model\Model;
 
-abstract class ModelUUID extends Model
+/**
+ * Trait HasUUID
+ * If your model needs to use UUID as primary key, you can use this trait to achieve it.
+ * @package Shared\Model\Trait
+ */
+trait HasUUID
 {
-    protected string $keyType = 'string';
-
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public bool $incrementing = false;
 
     protected function initialize(): void
     {
-        if (!$this->id) {
-            $this->id = (string) Uuid::uuid4();
+        if (parent::__get("id") === null) {
+            parent::__set("id", Uuid::uuid4());
         }
     }
 
     public function save(array $options = []): bool
     {
         $this->initialize();
+
         return parent::save($options);
     }
 

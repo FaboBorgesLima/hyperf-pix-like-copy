@@ -23,8 +23,12 @@ services:
           path: app
     networks:
       - auth-internal
-      - shared
+      - auth-cache
       - auth-gateway
+      - messaging
+    depends_on:
+      - postgres-auth
+      - redis-auth
   postgres-auth:
     image: postgres:17
     env_file:
@@ -35,18 +39,28 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     networks:
       - auth-internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${DB_USERNAME} -d $${DB_DATABASE}"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
   redis-auth:
     image: redis:7
     env_file:
-      .env
+      - .env
     networks:
-      - auth-internal
-      - shared
+      - auth-cache
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 networks:
   auth-internal:
     name: auth-internal
     driver: bridge
-  shared:
-    external: true
+  auth-cache:
   auth-gateway:
-    external: true
+  messaging:

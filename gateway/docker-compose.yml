@@ -16,13 +16,19 @@ services:
       - APP_ENV=dev
       - SCAN_CACHEABLE=false
     networks:
-      - shared
       - auth-gateway
+      - transaction-gateway
+      - auth-cache
+      - messaging
     env_file:
       - .env
+    develop:
+      watch:
+        - action: restart
+          path: app
 
 networks:
-  shared:
-    external: true
   auth-gateway:
-    external: true
+  transaction-gateway:
+  auth-cache:
+  messaging:
