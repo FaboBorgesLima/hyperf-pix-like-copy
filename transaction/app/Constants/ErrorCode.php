@@ -22,6 +22,7 @@ class ErrorCode extends AbstractConstants
      * @Message("Server Error！")
      */
     public const SERVER_ERROR = 500;
+
     /**
      * @Message("Unprocessable Entity！")
      */

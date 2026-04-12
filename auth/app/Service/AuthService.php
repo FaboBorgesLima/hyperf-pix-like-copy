@@ -1,34 +1,41 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 
 namespace App\Service;
 
 use App\Contract\TokenAttributionInterface;
 use App\Log;
-use Shared\Auth\Model\AuthToken;
 use App\Model\User;
 use App\Task\HashTask;
 use Carbon\Carbon;
 use Shared\Auth\Contract\TokenVerifierInterface;
+use Shared\Auth\Model\AuthToken;
 
 class AuthService
 {
-
     public function __construct(
         protected HashTask $hashTask,
         protected TokenAttributionInterface $tokenAttribution,
         protected TokenVerifierInterface $tokenVerifier
-    ) {}
+    ) {
+    }
 
     public function login(
         string $email,
         string $password
     ): ?string {
-
         $user = User::where('email', $email)->firstOrFail();
 
-        if (!$user || !$this->hashTask->verifyPassword($password, $user->password)) {
+        if (! $user || ! $this->hashTask->verifyPassword($password, $user->password)) {
             return null;
         }
 
@@ -68,7 +75,7 @@ class AuthService
     public function getUserFromToken(string $token): ?User
     {
         $authToken = $this->validateToken($token);
-        if (!$authToken) {
+        if (! $authToken) {
             return null;
         }
 
@@ -82,19 +89,16 @@ class AuthService
         }
 
         $authToken = $this->tokenVerifier->decode($token);
-        if (!$authToken || $authToken->isExpired()) {
+        if (! $authToken || $authToken->isExpired()) {
             return null;
         }
 
         return $authToken;
     }
 
-
     protected function createTokenForUser(User $user): AuthToken
     {
         $expireAt = Carbon::now()->addDays(7);
-        $authToken = AuthToken::create($user->id, $expireAt);
-
-        return $authToken;
+        return AuthToken::create($user->id, $expireAt);
     }
 }

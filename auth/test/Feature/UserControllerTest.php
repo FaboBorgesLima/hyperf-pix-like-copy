@@ -1,40 +1,31 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 
 namespace Tests\Feature;
 
 use HyperfTest\HttpTestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class UserControllerTest extends HttpTestCase
 {
-    // ── helpers ──────────────────────────────────────────────────────────────
-
-    private function register(): array
-    {
-        return $this->post('/auth/register', [
-            'username' => $this->faker()->name(),
-            'email'    => $this->faker()->email(),
-            'password' => $this->faker()->password(),
-        ]);
-    }
-
-    private function authHeader(string $token): array
-    {
-        return ['Authorization' => 'Bearer ' . $token];
-    }
-
-    private function me(string $token): array
-    {
-        return $this->get('/auth/me', [], $this->authHeader($token));
-    }
-
     // ── GET /users/{id} ───────────────────────────────────────────────────────
 
     public function testShowOwnProfile(): void
     {
         $token = $this->register()['token'];
-        $me    = $this->me($token);
+        $me = $this->me($token);
 
         $response = $this->get("/users/{$me['id']}", [], $this->authHeader($token));
 
@@ -46,7 +37,7 @@ class UserControllerTest extends HttpTestCase
     public function testShowProfileUnauthenticated(): void
     {
         $token = $this->register()['token'];
-        $me    = $this->me($token);
+        $me = $this->me($token);
 
         $response = $this->client->get("/users/{$me['id']}");
 
@@ -57,7 +48,7 @@ class UserControllerTest extends HttpTestCase
     {
         $token1 = $this->register()['token'];
         $token2 = $this->register()['token'];
-        $me2    = $this->me($token2);
+        $me2 = $this->me($token2);
 
         // User 1 tries to view User 2's profile
         $response = $this->get("/users/{$me2['id']}", [], $this->authHeader($token1));
@@ -70,10 +61,9 @@ class UserControllerTest extends HttpTestCase
 
     public function testUpdateProfile(): void
     {
-        $token   = $this->register()['token'];
+        $token = $this->register()['token'];
         $newName = $this->faker()->name();
-        $me      = $this->me($token);
-
+        $me = $this->me($token);
 
         $response = $this->client->put("/users/{$me['id']}", [
             'name' => $newName,
@@ -84,13 +74,32 @@ class UserControllerTest extends HttpTestCase
 
     public function testUpdateProfileUnauthenticated(): void
     {
-        $token   = $this->register()['token'];
+        $token = $this->register()['token'];
         $newName = $this->faker()->name();
-        $me      = $this->me($token);
+        $me = $this->me($token);
 
         $response = $this->client->put("/users/{$me['id']}", ['name' => $newName]);
 
-
         $this->assertEquals('Unauthorized', $response['message']);
+    }
+    // ── helpers ──────────────────────────────────────────────────────────────
+
+    private function register(): array
+    {
+        return $this->post('/auth/register', [
+            'username' => $this->faker()->name(),
+            'email' => $this->faker()->email(),
+            'password' => $this->faker()->password(),
+        ]);
+    }
+
+    private function authHeader(string $token): array
+    {
+        return ['Authorization' => 'Bearer ' . $token];
+    }
+
+    private function me(string $token): array
+    {
+        return $this->get('/auth/me', [], $this->authHeader($token));
     }
 }

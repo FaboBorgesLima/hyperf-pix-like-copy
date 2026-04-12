@@ -1,22 +1,36 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+
 namespace Tests\Unit;
 
 use App\Model\User;
+use Faker\Factory;
 use Hyperf\Context\ApplicationContext;
 use Tests\TestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class UserTest extends TestCase
 {
-
     public function testCreateUser(): void
     {
         $class = ApplicationContext::getContainer()->get(User::class);
 
         $user = $class::create([
-            'name' => \Faker\Factory::create()->name(),
-            'email' => \Faker\Factory::create()->email(),
-            'password' => \Faker\Factory::create()->password(),
+            'name' => Factory::create()->name(),
+            'email' => Factory::create()->email(),
+            'password' => Factory::create()->password(),
         ]);
 
         $this->assertNotNull($user);
@@ -60,7 +74,7 @@ class UserTest extends TestCase
 
         $this->assertNotNull($user);
 
-        $newName = \Faker\Factory::create()->name();
+        $newName = Factory::create()->name();
 
         $user->name = $newName;
         $user->save();

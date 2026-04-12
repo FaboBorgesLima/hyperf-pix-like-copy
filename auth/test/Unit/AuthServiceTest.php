@@ -1,14 +1,27 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+
 namespace Tests\Unit;
 
-
 use App\Service\AuthService;
+use Exception;
 use Tests\TestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class AuthServiceTest extends TestCase
 {
-
     public function testRegister(): void
     {
         $authService = $this->container->get(AuthService::class);
@@ -20,6 +33,7 @@ class AuthServiceTest extends TestCase
         $token = $authService->register($username, $email, $password);
         $this->assertNotNull($token);
     }
+
     public function testRegisterDuplicateEmail(): void
     {
         $authService = $this->container->get(AuthService::class);
@@ -38,12 +52,13 @@ class AuthServiceTest extends TestCase
         // Attempt to register second user with same email
         try {
             $authService->register($username2, $email, $password2);
-            $this->fail("Expected exception not thrown for duplicate email");
-        } catch (\Exception $e) {
+            $this->fail('Expected exception not thrown for duplicate email');
+        } catch (Exception $e) {
             // Expected exception for duplicate email
             $this->assertTrue(true);
         }
     }
+
     public function testLogin(): void
     {
         $authService = $this->container->get(AuthService::class);

@@ -1,17 +1,30 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+
 namespace HyperfTest\Unit;
 
+use App\Exception\BusinessException;
+use App\Service\AccountService;
+use Exception;
 use HyperfTest\TestCase;
 use Swoole\Coroutine;
+use Swoole\Coroutine\WaitGroup;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class AccountServiceTest extends TestCase
 {
-    protected function getService()
-    {
-        return $this->container->get(\App\Service\AccountService::class);
-    }
-
     public function testCreateAccount(): void
     {
         $account = $this->getService()->createAccount($this->faker()->uuid());
@@ -37,7 +50,7 @@ class AccountServiceTest extends TestCase
         $userId = $this->faker()->uuid();
         $this->getService()->createAccount($userId);
 
-        $this->expectException(\App\Exception\BusinessException::class);
+        $this->expectException(BusinessException::class);
         $this->expectExceptionMessage('Account already exists for this user');
 
         $this->getService()->createAccount($userId);
@@ -88,6 +101,14 @@ class AccountServiceTest extends TestCase
 
         $this->assertEquals(800, $updatedAccount1->balance);
         $this->assertEquals(1200, $updatedAccount2->balance);
+
+        $transactionsFrom = $updatedAccount1->fromTransactions()->where('to_account_id', $account2->id)->first();
+        $transactionsTo = $updatedAccount2->toTransactions()->where('from_account_id', $account1->id)->first();
+
+        $this->assertNotNull($transactionsFrom);
+        $this->assertNotNull($transactionsTo);
+        $this->assertEquals(200, $transactionsFrom->amount);
+        $this->assertEquals(200, $transactionsTo->amount);
     }
 
     public function testTransferWithInsufficientBalance(): void
@@ -100,10 +121,23 @@ class AccountServiceTest extends TestCase
         $userId2 = $this->faker()->uuid();
         $account2 = $service->createAccount($userId2);
 
-        $this->expectException(\App\Exception\BusinessException::class);
+        $this->expectException(BusinessException::class);
         $this->expectExceptionMessage('Insufficient balance');
 
         $service->transfer($account1, $account2, 2000); // more than available balance
+    }
+
+    public function testCannotTransferToSameAccount(): void
+    {
+        $service = $this->getService();
+
+        $userId = $this->faker()->uuid();
+        $account = $service->createAccount($userId);
+
+        $this->expectException(BusinessException::class);
+        $this->expectExceptionMessage('Cannot transfer to the same account');
+
+        $service->transfer($account, $account, 100); // Attempt to transfer to the same account
     }
 
     public function testConcurrentTransfers(): void
@@ -116,15 +150,14 @@ class AccountServiceTest extends TestCase
         $userId2 = $this->faker()->uuid();
         $account2 = $service->createAccount($userId2);
 
-        $wg = new \Swoole\Coroutine\WaitGroup();
+        $wg = new WaitGroup();
 
         $wg->add();
         Coroutine::create(function () use ($service, $account1, $account2, $wg) {
             try {
-
                 Coroutine::sleep($this->faker()->numberBetween(1, 2)); // Simulate random delay before transfer
                 $service->transfer($account1, $account2, 500, $this->faker()->numberBetween(1, 2)); // Simulate random delay
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->log('Transfer 1 failed: ' . $e->getMessage());
             } finally {
                 $wg->done();
@@ -136,7 +169,7 @@ class AccountServiceTest extends TestCase
             try {
                 Coroutine::sleep($this->faker()->numberBetween(1, 2)); // Simulate random delay before transfer
                 $service->transfer($account1, $account2, 700, $this->faker()->numberBetween(1, 2)); // Simulate random delay
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->log('Transfer 2 failed: ' . $e->getMessage());
             } finally {
                 $wg->done();
@@ -148,5 +181,10 @@ class AccountServiceTest extends TestCase
 
         // The total transferred amount cannot exceed the initial balance of 1000, so at least one transfer should fail
         $this->assertTrue($updatedAccount1->balance == 500 || $updatedAccount1->balance == 300); // At least one transfer should succeed
+    }
+
+    protected function getService()
+    {
+        return $this->container->get(AccountService::class);
     }
 }

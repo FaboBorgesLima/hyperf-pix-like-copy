@@ -21,6 +21,8 @@ use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\Testing\HttpClient;
 use Psr\Log\LoggerInterface;
 use Shared\Auth\Contract\TokenVerifierInterface;
+use Throwable;
+
 use function Hyperf\Support\env;
 
 #[Controller]
@@ -59,6 +61,18 @@ class IndexController
         return $this->fowardRequest($requestInterface, $responseInterface, $serviceUrl);
     }
 
+    #[RequestMapping(path: '/transactions/{path:.+}', methods: AllMapping::METHODS)]
+    public function transactions(RequestInterface $requestInterface, ResponseInterface $responseInterface)
+    {
+        $serviceUrl = \sprintf(
+            '%s:%d',
+            env('TRANSACTION_HOST', 'http://transaction'),
+            env('TRANSACTION_PORT', 9501)
+        );
+
+        return $this->fowardRequest($requestInterface, $responseInterface, $serviceUrl);
+    }
+
     #[RequestMapping(path: '/echo-headers', methods: AllMapping::METHODS)]
     public function echoHeaders(RequestInterface $requestInterface, ResponseInterface $responseInterface)
     {
@@ -77,23 +91,21 @@ class IndexController
         ]);
     }
 
-
     protected function addUserIdToHeaders(RequestInterface $requestInterface, array $headers): array
     {
-        $headers['X-User-Id'] = "";
+        $headers['X-User-Id'] = '';
 
         if ($requestInterface->hasHeader('Authorization')) {
             $token = $requestInterface->getHeaderLine('Authorization');
             $token = str_replace('Bearer ', '', $token);
             try {
                 $payload = $this->tokenVerifier->decode($token);
-                $headers['X-User-Id'] = $payload ? $payload->user_id : "";
-            } catch (\Throwable $e) {
+                $headers['X-User-Id'] = $payload ? $payload->user_id : '';
+            } catch (Throwable $e) {
                 $this->logger->warning('Token verification failed', ['error' => $e->getMessage()]);
-                $headers['X-User-Id'] = "";
+                $headers['X-User-Id'] = '';
             }
         }
-
 
         return $headers;
     }

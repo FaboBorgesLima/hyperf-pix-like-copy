@@ -55,6 +55,9 @@ composer_install "gateway"
 create_env "transaction"
 composer_install "transaction"
 
+create_env "notification"
+composer_install "notification"
+
 docker compose -f docker-compose.yaml up -d
 
 migrate_service "auth"

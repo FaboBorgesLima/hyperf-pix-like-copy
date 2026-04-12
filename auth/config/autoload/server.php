@@ -9,10 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
+use Hyperf\Framework\Bootstrap\FinishCallback;
+use Hyperf\Framework\Bootstrap\PipeMessageCallback;
+use Hyperf\Framework\Bootstrap\TaskCallback;
+use Hyperf\Framework\Bootstrap\WorkerExitCallback;
+use Hyperf\Framework\Bootstrap\WorkerStartCallback;
 use Hyperf\Server\Event;
 use Hyperf\Server\Server;
-use PhpParser\Node\Const_;
 use Swoole\Constant;
 
 return [
@@ -45,13 +48,12 @@ return [
         Constant::OPTION_SOCKET_BUFFER_SIZE => 2 * 1024 * 1024,
         Constant::OPTION_BUFFER_OUTPUT_SIZE => 2 * 1024 * 1024,
         Constant::OPTION_TASK_ENABLE_COROUTINE => false,
-
     ],
     'callbacks' => [
-        Event::ON_WORKER_START => [Hyperf\Framework\Bootstrap\WorkerStartCallback::class, 'onWorkerStart'],
-        Event::ON_PIPE_MESSAGE => [Hyperf\Framework\Bootstrap\PipeMessageCallback::class, 'onPipeMessage'],
-        Event::ON_WORKER_EXIT => [Hyperf\Framework\Bootstrap\WorkerExitCallback::class, 'onWorkerExit'],
-        Event::ON_TASK => [Hyperf\Framework\Bootstrap\TaskCallback::class, 'onTask'],
-        Event::ON_FINISH => [Hyperf\Framework\Bootstrap\FinishCallback::class, 'onFinish'],
+        Event::ON_WORKER_START => [WorkerStartCallback::class, 'onWorkerStart'],
+        Event::ON_PIPE_MESSAGE => [PipeMessageCallback::class, 'onPipeMessage'],
+        Event::ON_WORKER_EXIT => [WorkerExitCallback::class, 'onWorkerExit'],
+        Event::ON_TASK => [TaskCallback::class, 'onTask'],
+        Event::ON_FINISH => [FinishCallback::class, 'onFinish'],
     ],
 ];

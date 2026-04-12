@@ -1,6 +1,14 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 
 namespace App\Request;
 
@@ -22,7 +30,9 @@ class TransferRequest extends FormRequest
     public function rules(): array
     {
         return [
-
+            'from_account_id' => 'required|string',
+            'to_account_id' => 'required|string|different:from_account_id',
+            'amount' => 'required|int|min:1',
         ];
     }
 }

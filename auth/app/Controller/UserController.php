@@ -1,11 +1,20 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 
 namespace App\Controller;
 
 use App\Request\UpdateUserRequest;
 use App\Service\UserService;
+use Exception;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\GetMapping;
@@ -22,13 +31,13 @@ class UserController
     #[Inject]
     private UserService $userService;
 
-    #[GetMapping(path: "/users/{id}")]
+    #[GetMapping(path: '/users/{id}')]
     public function getUser(RequestInterface $request, ResponseInterface $response, string $id)
     {
         $authToken = $request->getAttribute('auth');
         $user = $this->userService->getUserProfile($authToken, $id);
 
-        if (!$user) {
+        if (! $user) {
             return $response->json(['message' => 'User not found'])->withStatus(404);
         }
 
@@ -40,7 +49,7 @@ class UserController
     }
 
     // Additional methods for update and delete can be added here
-    #[PutMapping(path: "/users/{id}")]
+    #[PutMapping(path: '/users/{id}')]
     public function updateUser(UpdateUserRequest $request, ResponseInterface $response, string $id)
     {
         $authToken = $request->getAttribute('auth');
@@ -53,7 +62,7 @@ class UserController
                 'name' => $user->name,
                 'email' => $user->email,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $response->json(['message' => 'Update failed: ' . $e->getMessage()])->withStatus(400);
         }
     }

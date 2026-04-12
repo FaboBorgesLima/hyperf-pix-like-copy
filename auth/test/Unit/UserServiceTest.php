@@ -1,22 +1,30 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 
 namespace Tests\Unit;
 
 use App\Exception\BusinessException;
-use Shared\Auth\Model\AuthToken;
 use App\Service\UserService;
 use Carbon\Carbon;
+use Ramsey\Uuid\Uuid;
+use Shared\Auth\Model\AuthToken;
 use Tests\TestCase;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class UserServiceTest extends TestCase
 {
-    private function service(): UserService
-    {
-        return $this->container->get(UserService::class);
-    }
-
     // --- canView ---
 
     public function testCanViewOwnProfile(): void
@@ -131,7 +139,7 @@ class UserServiceTest extends TestCase
     {
         $user = $this->createUser();
         // Craft a token pointing to a non-existent user so canEdit passes (same id) but find returns null
-        $fakeId = \Ramsey\Uuid\Uuid::uuid4()->toString();
+        $fakeId = Uuid::uuid4()->toString();
         $ghostToken = new AuthToken($fakeId, Carbon::now()->addHour(), 'fake-token');
 
         $this->expectException(BusinessException::class);
@@ -162,5 +170,10 @@ class UserServiceTest extends TestCase
         $this->expectExceptionCode(403);
 
         $this->service()->deleteUser($authToken, $user->id);
+    }
+
+    private function service(): UserService
+    {
+        return $this->container->get(UserService::class);
     }
 }

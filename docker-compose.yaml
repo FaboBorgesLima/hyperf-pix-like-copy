@@ -14,11 +14,15 @@ networks:
   auth-cache:
     name: auth-cache
     driver: bridge
+  notification-internal:
+    name: notification-internal
+    driver: bridge
 
 include:
   - auth/docker-compose.yml
   - gateway/docker-compose.yml
   - transaction/docker-compose.yml
+  - notification/docker-compose.yml
 services:
   rabbitmq:
     image: rabbitmq:3-management

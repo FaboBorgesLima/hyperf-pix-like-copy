@@ -8,24 +8,25 @@ use App\Log;
 use App\Model\AuthToken;
 use App\Model\User;
 use App\Request\LoginRequest;
-use Hyperf\HttpServer\Contract\RequestInterface;
-use Hyperf\HttpServer\Contract\ResponseInterface;
-use App\Service\AuthService;
-use Hyperf\Di\Annotation\Inject;
 use App\Request\RegisterRequest;
+use App\Service\AuthService;
+use Exception;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\GetMapping;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\PostMapping;
+use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\HttpServer\Contract\ResponseInterface;
 use Shared\Auth\Middleware\AuthMiddleware;
 
-#[AutoController(prefix: "/auth")]
+#[AutoController(prefix: '/auth')]
 class AuthController
 {
     #[Inject]
     protected AuthService $authService;
 
-    #[PostMapping(path: "/register")]
+    #[PostMapping(path: '/register')]
     public function register(RegisterRequest $request, ResponseInterface $response)
     {
         $data = $request->all();
@@ -35,17 +36,16 @@ class AuthController
         $password = $data['password'] ?? '';
 
         try {
-
             $token = $this->authService->register($username, $email, $password);
 
             return $response->json(['token' => $token]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::info("User registration failed for username: {$username}, email: {$email}. Error: " . $e->getMessage());
             return $response->json(['message' => 'Registration failed'])->withStatus(400);
         }
     }
 
-    #[PostMapping(path: "/login")]
+    #[PostMapping(path: '/login')]
     public function login(LoginRequest $request, ResponseInterface $response)
     {
         $data = $request->post();
@@ -57,16 +57,15 @@ class AuthController
             $token = $this->authService->login($email, $password);
             if ($token) {
                 return $response->json(['token' => $token]);
-            } else {
-                return $response->json(['message' => 'Invalid credentials']);
             }
-        } catch (\Exception $e) {
-            Log::info("Fail to auth" . $e->getMessage());
+            return $response->json(['message' => 'Invalid credentials']);
+        } catch (Exception $e) {
+            Log::info('Fail to auth' . $e->getMessage());
             return $response->json(['message' => 'Invalid credentials'])->withStatus(401);
         }
     }
 
-    #[PostMapping(path: "/logout")]
+    #[PostMapping(path: '/logout')]
     public function logout(RequestInterface $request, ResponseInterface $response)
     {
         $authHeader = $request->getHeaderLine('Authorization');
@@ -78,7 +77,7 @@ class AuthController
         return $response->json(['message' => 'Logged out successfully']);
     }
 
-    #[GetMapping(path: "/me")]
+    #[GetMapping(path: '/me')]
     #[Middleware(AuthMiddleware::class)]
     public function me(RequestInterface $request, ResponseInterface $response)
     {

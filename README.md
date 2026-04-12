@@ -24,3 +24,17 @@ Run the following command to set up the application:
 ```bash
 docker compose up
 ```
+
+## Testing
+
+You can run tests for each service using the following command:
+
+```bash
+docker compose exec <service_name> composer test
+```
+
+or for all services:
+
+```bash
+./cli.sh test-all
+```

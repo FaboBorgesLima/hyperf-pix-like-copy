@@ -1,12 +1,24 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+
 namespace App\Service;
 
-use App\Model\Account;
-use App\Exception\BusinessException;
 use App\Constants\ErrorCode;
+use App\Exception\BusinessException;
+use App\Model\Account;
+use App\Model\Transaction;
 use Hyperf\DbConnection\Db;
 use Swoole\Coroutine;
+use Throwable;
 
 class AccountService
 {
@@ -46,12 +58,16 @@ class AccountService
 
     /**
      * Transfer funds from one account to another with proper transaction handling.
-     * @param int $sleep ONLY FOR TESTING PURPOSES: Simulate a delay to test concurrent transfers.
+     * @param int $sleep ONLY FOR TESTING PURPOSES: Simulate a delay to test concurrent transfers
      */
     public function transfer(Account $from, Account $to, float $amount, int $sleep = 0): void
     {
         if ($amount <= 0) {
             throw new BusinessException(ErrorCode::UNPROCESSABLE_ENTITY, 'Transfer amount must be greater than zero');
+        }
+
+        if ($from->id === $to->id) {
+            throw new BusinessException(ErrorCode::UNPROCESSABLE_ENTITY, 'Cannot transfer to the same account');
         }
 
         Db::beginTransaction();
@@ -84,8 +100,14 @@ class AccountService
                 throw new BusinessException(ErrorCode::UNPROCESSABLE_ENTITY, 'Failed to update to account balance');
             }
 
+            Transaction::create([
+                'from_account_id' => $from->id,
+                'to_account_id' => $to->id,
+                'amount' => $amount,
+            ]);
+
             Db::commit();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Db::rollBack();
             throw $e;
         }
